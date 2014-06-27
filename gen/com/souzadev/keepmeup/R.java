@@ -14,9 +14,14 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int main_relativeLayout_bot=0x7f060001;
+        public static final int main_relativeLayout_bot=0x7f060005;
         public static final int main_relativeLayout_top=0x7f060000;
-        public static final int main_view_smallSquare=0x7f060002;
+        public static final int main_toggleButton_activate=0x7f060004;
+        public static final int main_toggleButton_sensorX=0x7f060001;
+        public static final int main_toggleButton_sensorY=0x7f060002;
+        public static final int main_toggleButton_sensorZ=0x7f060003;
+        public static final int main_view_bigSquare=0x7f060006;
+        public static final int main_view_smallSquare=0x7f060007;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;

@@ -8,18 +8,60 @@
 	
     <RelativeLayout android:id="@+id/main_relativeLayout_top"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="200dp"
         android:background="#AAAAAAAA"
-        android:layout_margin="5dp">               
+        android:layout_margin="5dp">
+
+        <ToggleButton
+            android:id="@+id/main_toggleButton_sensorX"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"/>
+
+        <ToggleButton
+            android:id="@+id/main_toggleButton_sensorY"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"/>
+
+        <ToggleButton
+            android:id="@+id/main_toggleButton_sensorZ"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"/>
+
+        <ToggleButton
+            android:id="@+id/main_toggleButton_activate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+			android:layout_below="@+id/main_toggleButton_sensorY"
+            android:layout_marginTop="14dp"
+            android:layout_centerHorizontal="true"
+            android:textOn="Activate"
+            android:textOff="Activate"/>
+               
     </RelativeLayout>
     
-    <RelativeLayout android:id="@+id/main_relativeLayout_bot"
+    <RelativeLayout 
+        android:id="@+id/main_relativeLayout_bot"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#AAAAAAAA"
         android:layout_margin="5dp">
 
-        <View android:id="@+id/main_view_smallSquare"
+        <View
+            android:id="@+id/main_view_bigSquare"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="#FF00FF00" />
+            
+		<View 
+            android:id="@+id/main_view_smallSquare"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_centerHorizontal="true"
