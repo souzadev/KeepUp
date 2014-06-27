@@ -17,21 +17,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"/>
+            android:layout_alignParentTop="true"
+            android:checked="true"/>
 
         <ToggleButton
             android:id="@+id/main_toggleButton_sensorY"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"/>
+            android:layout_centerHorizontal="true"
+            android:checked="true"/>
 
         <ToggleButton
             android:id="@+id/main_toggleButton_sensorZ"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="true"
+            android:checked="true"/>
 
         <ToggleButton
             android:id="@+id/main_toggleButton_activate"
@@ -41,7 +44,8 @@
             android:layout_marginTop="14dp"
             android:layout_centerHorizontal="true"
             android:textOn="Activate"
-            android:textOff="Activate"/>
+            android:textOff="Activate"
+            android:onClick="activateButton"/>
                
     </RelativeLayout>
     
