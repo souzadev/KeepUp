@@ -1,80 +1,82 @@
 package com.souzadev.keepmeup;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.PointF;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.ToggleButton;
 
 public class MainActivity extends Activity {
-
 	//Components 
 	private View squareView;
 	private PointF squarePosition;
 	private ToggleButton toggleButton;	
 	
 	//Sensor
-	private SensorManager sensorMan;
-	private Sensor sensor;
 	//**************************************** OVERRIDE ***************************
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		initComponents();
-		
-		//Init Sensor
-		sensorMan = (SensorManager)getSystemService(SENSOR_SERVICE);
-        sensor = sensorMan.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        
+		//Init vars
+		squarePosition = new PointF();		
+		initComponents();        
+	}
+	
+	@Override
+	protected void onPause() {		
+		super.onPause();
 	}
 	
 	//********************************* PRIVATE ******************************
 	private void initComponents() {
 		squareView = (View)findViewById(R.id.main_view_smallSquare);
-		squarePosition.x = squareView.getX();
-		squarePosition.y = squareView.getY();
 	}
 	
 	private void activate(){
 		toggleButton = (ToggleButton)findViewById(R.id.main_toggleButton_activate);
 		if (toggleButton.isChecked()){
-			sensorMan.registerListener(sensorListener, sensor, SensorManager.SENSOR_DELAY_GAME);			
-		}else{						
-			sensorMan.unregisterListener(sensorListener);
+			squarePosition.x = squareView.getX();
+			squarePosition.y = squareView.getY();
+			
+			boolean[] checkXyz = new boolean[3];
+			checkXyz[0] = true;
+			checkXyz[1] = true;
+			checkXyz[2] = true;
+			
+			Intent intent = new Intent(this, Core.class);
+			intent.putExtra("xyz", checkXyz);
+			System.out.println("Sending intent");
+			startService(intent);			
+		}else{				
 			squareView.setX(squarePosition.x);
-			squareView.setX(squarePosition.y);
+			squareView.setY(squarePosition.y);			
 		}
 	}
 	
-	private SensorEventListener sensorListener = new SensorEventListener() {		
-		@Override
+	/*private SensorEventListener sensorListener = new SensorEventListener() {		
+		@Override		
 		public void onSensorChanged(SensorEvent event) {
 			
 			
 			toggleButton = (ToggleButton)findViewById(R.id.main_toggleButton_sensorX);
 			if (toggleButton.isChecked()){
-				toggleButton.setText(String.format("%.02f", event.values[0]));
-				squareView.setY(squareView.getY() + event.values[0] * 10);
+				toggleButton.setText(String.format("%.05f", (event.values[0] - DRIFT_X)));
+				squareView.setY(squareView.getY() + (event.values[0] - DRIFT_X) * 10);
 			}
-			
-			
+						
 			toggleButton = (ToggleButton)findViewById(R.id.main_toggleButton_sensorY);
 			if (toggleButton.isChecked()){
-				toggleButton.setText(String.format("%.02f", event.values[1]));
-				squareView.setX(squareView.getX() + event.values[1] * 10);
+				toggleButton.setText(String.format("%.05f", (event.values[1] - DRIFT_Y)));
+				squareView.setX(squareView.getX() + (event.values[1] - DRIFT_Y) * 10);
 			}
 			
 			toggleButton = (ToggleButton)findViewById(R.id.main_toggleButton_sensorZ);
 			if (toggleButton.isChecked()){
-				toggleButton.setText(String.format("%.02f", event.values[2]));
-				squareView.setY(squareView.getY() - event.values[2] * 10);
+				toggleButton.setText(String.format("%.05f", (event.values[2] - DRIFT_Z)));
+				squareView.setY(squareView.getY() - (event.values[2] - DRIFT_Z) * 10);
 			}
 		}
 		
@@ -82,7 +84,7 @@ public class MainActivity extends Activity {
 		public void onAccuracyChanged(Sensor sensor, int accuracy) {
 			// TODO Auto-generated method stub			
 		}
-	};
+	};*/
 	
 	//************************************ PUBLIC *********************************
 	
