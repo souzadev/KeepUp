@@ -1,94 +1,128 @@
 package com.souzadev.keepmeup;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
-public class MainActivity extends Activity {
+import com.souzadev.keepmeup.CoreService.LocalBinder;
+
+public class MainActivity extends Activity implements ServiceConnection{
+	//Const
+	public static final float DRIFT_X = 0.00024f;
+	public static final float DRIFT_Y = 0.00073f;
+	public static final float DRIFT_Z = 0.00317f;
+	
 	//Components 
 	private View squareView;
-	private PointF squarePosition;
-	private ToggleButton toggleButton;	
+	private ToggleButton toggleButton;
+	private RelativeLayout layoutBot;
 	
-	//Sensor
+	//Connection
+	CoreService myService;
+	
 	//**************************************** OVERRIDE ***************************
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		//Init vars
-		squarePosition = new PointF();		
-		initComponents();        
+		Intent intent = new Intent(this, CoreService.class);
+		stopService(intent);
+		
+		initComponents();		
 	}
 	
 	@Override
-	protected void onPause() {		
-		super.onPause();
+	protected void onStart() {
+		super.onStart();		
+		bindToService();
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		unbindFromService();
+	}
+	
+	@Override
+	public void onServiceConnected(ComponentName name, IBinder service) {
+		LocalBinder locBinder = (LocalBinder)service;
+		myService = locBinder.getService();
+		myService.setComponents((ToggleButton)findViewById(R.id.main_toggleButton_sensorX), (ToggleButton)findViewById(R.id.main_toggleButton_sensorY), (ToggleButton)findViewById(R.id.main_toggleButton_sensorZ),
+								(TextView)findViewById(R.id.main_textView_squarePosition), (TextView)findViewById(R.id.main_textView_virtualPosition), (TextView)findViewById(R.id.main_textView_test),squareView);
+		toggleButton = (ToggleButton)findViewById(R.id.main_toggleButton_activate);
+		toggleButton.setChecked(true);
+		System.out.println("Connected");
+	}
+
+	@Override
+	public void onServiceDisconnected(ComponentName name) {
 	}
 	
 	//********************************* PRIVATE ******************************
 	private void initComponents() {
 		squareView = (View)findViewById(R.id.main_view_smallSquare);
+		layoutBot = (RelativeLayout)findViewById(R.id.main_relativeLayout_bot);
 	}
 	
 	private void activate(){
 		toggleButton = (ToggleButton)findViewById(R.id.main_toggleButton_activate);
 		if (toggleButton.isChecked()){
-			squarePosition.x = squareView.getX();
-			squarePosition.y = squareView.getY();
-			
-			boolean[] checkXyz = new boolean[3];
-			checkXyz[0] = true;
-			checkXyz[1] = true;
-			checkXyz[2] = true;
-			
-			Intent intent = new Intent(this, Core.class);
-			intent.putExtra("xyz", checkXyz);
 			System.out.println("Sending intent");
-			startService(intent);			
-		}else{				
-			squareView.setX(squarePosition.x);
-			squareView.setY(squarePosition.y);			
+			Intent intent = new Intent(this, CoreService.class);
+			startService(intent);
+			bindToService();
+		}else{
+			unbindFromService();
+			Intent intent = new Intent(this, CoreService.class);
+			stopService(intent);
+			
+			squareView.setBackgroundColor(Color.BLACK);
+			squareView.setX((layoutBot.getWidth() / 2) - 38);
+			squareView.setY((layoutBot.getHeight() / 2) - 38);
+			squareView.setRotation(0);
 		}
 	}
 	
-	/*private SensorEventListener sensorListener = new SensorEventListener() {		
-		@Override		
-		public void onSensorChanged(SensorEvent event) {
-			
-			
-			toggleButton = (ToggleButton)findViewById(R.id.main_toggleButton_sensorX);
-			if (toggleButton.isChecked()){
-				toggleButton.setText(String.format("%.05f", (event.values[0] - DRIFT_X)));
-				squareView.setY(squareView.getY() + (event.values[0] - DRIFT_X) * 10);
-			}
-						
-			toggleButton = (ToggleButton)findViewById(R.id.main_toggleButton_sensorY);
-			if (toggleButton.isChecked()){
-				toggleButton.setText(String.format("%.05f", (event.values[1] - DRIFT_Y)));
-				squareView.setX(squareView.getX() + (event.values[1] - DRIFT_Y) * 10);
-			}
-			
-			toggleButton = (ToggleButton)findViewById(R.id.main_toggleButton_sensorZ);
-			if (toggleButton.isChecked()){
-				toggleButton.setText(String.format("%.05f", (event.values[2] - DRIFT_Z)));
-				squareView.setY(squareView.getY() - (event.values[2] - DRIFT_Z) * 10);
-			}
+	private void bindToService(){
+		SeekBar sb = (SeekBar)findViewById(R.id.main_seekBar_sensibility);		
+		Intent intent = new Intent(this, CoreService.class);
+		intent.putExtra("SENSIBILITY", sb.getProgress());
+		try{		
+			bindService(intent, this, 0);
+		}catch(Exception ex){
+			ex.printStackTrace();
 		}
-		
-		@Override
-		public void onAccuracyChanged(Sensor sensor, int accuracy) {
-			// TODO Auto-generated method stub			
+	}
+	
+	private void unbindFromService(){
+		try{
+			unbindService(this);
+		}catch(Exception ex){			
 		}
-	};*/
+	}
+	
+	private void test(){
+
+	}
 	
 	//************************************ PUBLIC *********************************
 	
 	public void activateButton(View view){
 		activate();
 	}	
+	
+	public void testButton(View view){
+		test();
+	}
 }
